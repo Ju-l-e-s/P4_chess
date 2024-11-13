@@ -42,28 +42,38 @@ def main():
         lieu="Paris",
         date_debut="01/10/2023",
         date_fin="13/10/2023",
-        nb_tours=5,
+        nb_tours=2,
         tour_actuel=1,
-        #joueurs=[],  # Initialement vide
+        # joueurs=[],
         joueurs=joueurs,  # Initialement vide
 
         tours=tours,
         description="Tournoi annuel"
     )
 
-    # Ajout des joueurs au tournoi
-    # for joueur in joueurs:
-    #     tournoi.ajouter_joueur(joueur)
+    # Démarrage et gestion des tours
+    for tour_num in range(tournoi.nb_tours):
+       print(f"\n--- Début du Tour {tour_num + 1} ---")
+       tournoi.demarrer_nouveau_tour()
 
-    # Affichage des informations du tournoi après ajout des joueurs
-    # tournoi.afficher_informations()
-    
-    joueurs_melanges = tournoi.liste_joueurs_aléatoire()
-    print("Liste des joueurs mélangés :")
-    for joueur in joueurs_melanges:
-        print(joueur)
-        
-    # Fermer le script après les impressions
+       # Récupérer le tour courant
+       tour_courant = tournoi.tours[-1]
+
+       # Enregistrer les résultats des matchs et terminer le tour
+       tour_courant.terminer(tournoi)
+
+       print("\n--- Fin du Tour ---")
+       tournoi.afficher_classement()
+    # Afficher le classement final du tournoi
+#     print("\n--- Classement Final ---")
+#     tournoi.afficher_classement()
+
+#     Sauvegarder et charger pour tester la persistance
+#     tournoi.sauvegarder_tournoi("sauvegardes/tournoi_test.json")
+#     tournoi_recharge = Tournoi.charger_tournoi("sauvegardes/tournois/tournoi_test.json")
+#     print("\n--- Tournoi Rechargé ---")
+#     tournoi_recharge.afficher_classement()
+
     sys.exit()
 
 
