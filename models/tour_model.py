@@ -1,5 +1,5 @@
 from datetime import datetime
-from models.match import Match
+from models.match_model import Match
 
 class Tour:
     def __init__(self, nom: str):

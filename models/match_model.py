@@ -1,4 +1,4 @@
-from models.joueur import Joueur
+from models.joueur_model import Joueur
 import random
 
 class Match:
