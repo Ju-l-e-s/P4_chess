@@ -1,32 +1,51 @@
 from models.match_model import Match
-
+from models.player_model import Player
 
 class MatchView:
-    @staticmethod
-    def afficher_match(match: Match) -> None:
-        """
-        Display the match information.
+    """
+    Provides methods to display match information and interact with the user.
 
-        :param match: The match object containing player information
+    :param None
+    :type None
+    :return: None
+    :rtype: None
+    """
+    @staticmethod
+    def display_match(match: Match) -> None:
+        """
+        Displays match information.
+
+        :param match: The match to display
         :type match: Match
         :return: None
         :rtype: None
         """
-        print(f"{match.joueur1} vs {match.joueur2}")
+        print(f"{match.player1} vs {match.player2}")
 
     @staticmethod
-    def demander_resultat_match(joueur1: str, joueur2: str) -> str:
+    def request_match_result(player1: Player, player2: Player) -> str:
         """
-        Ask for the result of the match between two players.
+        Requests the result of the match between two players.
 
-        :param joueur1: Name of player 1
-        :type joueur1: str
-        :param joueur2: Name of player 2
-        :type joueur2: str
-        :return: The result of the match (1 pour le joeur 1, 2 pour le joueur 2, N pour match nul)
+        :param player1: First player
+        :type player1: Player
+        :param player2: Second player
+        :type player2: Player
+        :return: The result of the match ('1', '2', or 'N')
         :rtype: str
         """
-        print(f"Match entre {joueur1} et {joueur2}")
-        resultat = input(
-            "Qui a gagné? (1 pour le joeur 1, 2 pour le joueur 2, N pour match nul): ")
-        return resultat
+        print(f"Match entre {player1} et {player2}")
+        result = input("Qui a gagné ? (1 pour joueur 1, 2 pour joueur 2, N pour match nul) : ")
+        return result
+
+    @staticmethod
+    def display_message(message: str) -> None:
+        """
+        Displays a message to the user.
+
+        :param message: The message to display
+        :type message: str
+        :return: None
+        :rtype: None
+        """
+        print(message)

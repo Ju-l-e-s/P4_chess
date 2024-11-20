@@ -1,83 +1,121 @@
-import sys
-from controllers.tournoi_controller import TournoiController
-from controllers.joueur_controller import JoueurController
+from controllers.player_controller import PlayerController
+from controllers.tournament_controller import TournamentController
+from controllers.report_controller import ReportController
 
 def main() -> None:
     """
-    Main function to run the tournament management system.
+    Displays the main menu and handles navigation between submenus.
 
+    :param None
+    :type None
     :raises KeyboardInterrupt: If the user interrupts the script with Ctrl+C.
+    :return: None
+    :rtype: None
     """
-    tournoi_controller = TournoiController()
     while True:
-        print("\n--- Menu Principal ---")
-        print("1. Ajouter un joueur")
-        print("2. Lister les joueurs")
-        print("3. Créer un tournoi")
-        print("4. Lister les tournois")
-        print("5. Démarrer un tournoi")
-        print("6. Quitter")
-        choix = input("Votre choix : ")
+        print("\n--- Menu principal ---")
+        print("1. Joueurs")
+        print("2. Tournois")
+        print("3. Rapports")
+        print("4. Quitter")
+        choice: str = input("Choisir une option: ")
 
-        if choix.lower() == 'retour':
-            continue  # L'utilisateur est déjà au menu principal, donc continue
-
-        if choix == '1':
-            """
-            Add a player to the tournament.
-
-            :return: None
-            """
-            tournoi_controller.joueur_controller.ajouter_joueur()
-        elif choix == '2':
-            """
-            List all players in the tournament.
-
-            :return: None
-            """
-            tournoi_controller.joueur_controller.lister_joueurs()
-        elif choix == '3':
-            """
-            Create a new tournament.
-
-            :return: None
-            """
-            tournoi_controller.creer_tournoi()
-        elif choix == '4':
-            """
-            List all tournaments.
-
-            :return: None
-            """
-            tournoi_controller.lister_tournois()
-        elif choix == '5':
-            """
-            Start a selected tournament.
-
-            :return: None
-            """
-            tournoi = tournoi_controller.selectionner_tournoi()
-            if tournoi:
-                tournoi_controller.demarrer_tournoi(tournoi)
-        elif choix == '6':
-            """
-            Exit the program.
-
-            :return: None
-            """
-            print("Au revoir !")
+        if choice == '1':
+            player_submenu()
+        elif choice == '2':
+            tournament_submenu()
+        elif choice == '3':
+            report_submenu()
+        elif choice == '4':
+            print("Goodbye!")
             break
         else:
-            """
-            Handle invalid menu choices.
+            print("Choix invalide, essayez autre chose.")
 
-            :return: None
-            """
-            print("Choix invalide. Veuillez réessayer.")
+def player_submenu() -> None:
+    """
+    Displays the player submenu and handles options.
+
+    :return: None
+    :rtype: None
+    """
+    controller = PlayerController()
+    while True:
+        print("\n--- Player Menu ---")
+        print("1. Ajouter un joueur")
+        print("2. Liste des joueurs")
+        print("3. Retour au menu principal")
+        choice: str = input("Sélectionner une option: ")
+
+        if choice == '1':
+            controller.add_player()
+        elif choice == '2':
+            controller.list_players_alphabetically()
+        elif choice == '3':
+            break
+        else:
+            print("Choix invalide, essayez autre chose.")
+
+def tournament_submenu() -> None:
+    """
+    Displays the tournament submenu and handles options.
+
+    :return: None
+    :rtype: None
+    """
+    controller = TournamentController()
+    while True:
+        print("\n--- Menu Tournoi ---")
+        print("1. Creer un tournoi")
+        print("2. Débuter un tournoi")
+        print("3. Liste des tournois")
+        print("4. Retour au menu principal")
+        choice: str = input("Sélectionner une option: ")
+
+        if choice == '1':
+            controller.create_tournament()
+        elif choice == '2':
+            tournament = controller.select_tournament()
+            if tournament:
+                controller.start_tournament(tournament)
+        elif choice == '3':
+            controller.list_tournaments()
+        elif choice == '4':
+            break
+        else:
+            print("Choix invalide, essayez autre chose.")
+
+def report_submenu() -> None:
+    """
+    Displays the reports submenu and handles options.
+
+    :return: None
+    :rtype: None
+    """
+    controller = ReportController()
+    while True:
+        print("\n--- Menu Rapports ---")
+        print("1. Liste de tous les joueurs par ordre alphabétique")
+        print("2. Liste de tous les tournois")
+        print("3. Afficher les détails du tournoi")
+        print("4. Retour au menu principal")
+        choice: str = input("Sélectionner une option: ")
+
+        if choice == '1':
+            controller.display_all_players()
+        elif choice == '2':
+            controller.display_all_tournaments()
+        elif choice == '3':
+            tournament = controller.tournament_controller.select_tournament()
+            if tournament:
+                controller.display_tournament_details(tournament)
+        elif choice == '4':
+            break
+        else:
+            print("Choix invalide, essayez autre chose.")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print("\nScript interrompu par l'utilisateur.")
-        sys.exit(0)

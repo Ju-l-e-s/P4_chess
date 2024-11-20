@@ -1,102 +1,99 @@
-# Gestion de Tournois d'Échecs
+# Chess Tournament Management
 
-Ce projet est une application console en Python permettant de gérer des tournois d'échecs selon le système suisse. Il offre les fonctionnalités suivantes :
+This project is a console application in Python for managing chess tournaments using the Swiss system. It offers the following features:
 
-- **Gestion des joueurs** : ajout et listing des joueurs avec leurs informations.
-- **Gestion des tournois** : création et gestion de tournois avec plusieurs tours.
-- **Génération des appariements** : appariement des joueurs en respectant les règles du système suisse.
-- **Enregistrement des résultats** : saisie des résultats des matchs et mise à jour des points.
-- **Rapports** : génération de rapports sur les joueurs et les tournois.
+- **Player Management**: Add and list players with their information.
+- **Tournament Management**: Create and manage tournaments with multiple rounds.
+- **Pairing Generation**: Pair players according to the Swiss system rules.
+- **Result Recording**: Enter match results and update points.
+- **Reports**: Generate reports on players and tournaments.
 
-## Prérequis
+## Prerequisites
 
-- **Python 3.7** ou supérieur installé sur votre machine.
-- Les dépendances Python listées dans `requirements.txt`.
+- **Python 3.7** or higher installed on your machine.
+- Python dependencies listed in `requirements.txt`.
 
 ## Installation
 
-1. **Cloner le dépôt du projet :**
+1. **Clone the project repository:**
 
 ```bash
-git clone <URL_DU_DÉPÔT>
+git clone <REPOSITORY_URL>
 ```
 
-2. **Naviguer dans le répertoire du projet :**
+2. **Navigate to the project directory:**
 
 ```bash
 cd nom_du_projet
 ```
 
-3. **Créer un environnement virtuel :**
+3. **Create a virtual environment:**
 
 ```bash
 python -m venv env
 ```
 
-**Sur Windows :**
+**On Windows:**
 ```bash
 env\Scripts\activate
 ```
 
-**Sur macOS/Linux :**
+**On macOS/Linux:**
 ```bash
 source env/bin/activate
 ```
 
-4. **Installer les dépendances :**
+4. **Install the dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
 
 
-**Utilisation**
+**Usage**
 ```bash
 python main.py
 ```
-Le programme affiche un menu principal permettant d'effectuer les actions suivantes :
+The program displays a main menu allowing you to perform the following actions:
 
-1. **Ajouter un joueur** : saisir les informations d'un nouveau joueur.
-2. **Lister les joueurs** : afficher la liste des joueurs enregistrés.
-3. **Créer un tournoi** : initialiser un nouveau tournoi.
-4. **Lister les tournois** : afficher la liste des tournois existants.
-5. **Démarrer un tournoi** : lancer le déroulement d'un tournoi sélectionné.
-6. **Quitter** : fermer le programme.
+1. **Add a player**: Enter the information of a new player.
+2. **List players**: Display the list of registered players.
+3. **Create a tournament**: Initialize a new tournament.
+4. **List tournaments**: Display the list of existing tournaments.
+5. **Start a tournament**: Start the selected tournament.
+6. **Quit**: Close the program.
 
-### Instructions générales
+### General Instructions
 
-- **Navigation dans le menu** : entrez le numéro correspondant à l'action que vous souhaitez effectuer.
-- **Saisie des informations** : suivez les instructions à l'écran pour entrer les données requises.
-- **Format des dates** : les dates doivent être au format `jj/mm/aaaa`.
-- **Identifiant national** : doit être composé de deux lettres majuscules suivies de cinq chiffres (exemple : `AB12345`).
+- **Menu navigation**: Enter the number corresponding to the action you want to perform.
+- **Entering information**: Follow the on-screen instructions to enter the required data.
+- **Date format**: Dates must be in the format `dd/mm/yyyy`.
+- **National ID**: Must consist of two uppercase letters followed by five digits (example: `AB12345`).
 
 
-## Structure du projet :
+## Project Structure:
 ```
-- controllers/
-    - __init__.py
-    - joueur_controller.py
-    - match_controller.py
-    - tour_controller.py
-    - tournoi_controller.py
-- models/
-    - __init__.py
-    - joueur.py
-    - match.py
-    - tour.py
-    - tournoi.py
-- views/
-    - __init__.py
-    - joueur_view.py
-    - match_view.py
-    - tour_view.py
-    - tournoi_view.py
-- data/
-    - joueurs.json
-    - tournois.json
-- flake8_report/
-    - index.html
-- main.py
-- requirements.txt
-- README.md
+├── controllers/
+│ ├── match_controller.py
+│ ├── player_controller.py
+│ ├── report_controller.py
+│ ├── round_controller.py
+│ └── tournament_controller.py
+├── models/
+│ ├── match_model.py
+│ ├── player_model.py
+│ ├── round_model.py
+│ └── tournament_model.py
+├── views/
+│ ├── match_view.py
+│ ├── player_view.py
+│ └── tournament_view.py
+├── data/ # Contains data files
+│ ├── players.json
+│ └── tournaments.json
+├── main.py
+├── requirements.txt
+├── flake8_report/
+│ └── index.html
+└── README.md
 ```

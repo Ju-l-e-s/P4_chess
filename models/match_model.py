@@ -1,123 +1,78 @@
-from models.joueur_model import Joueur
-import random
-from typing import List, Dict, Any
+from models.player_model import Player
+from typing import Dict, Any
 
 class Match:
-    def __init__(self, joueur1: Joueur, joueur2: Joueur):
+    """
+    Represents a match between two players.
+
+    :param player1: The first player
+    :type player1: Player
+    :param player2: The second player
+    :type player2: Player
+    :return: None
+    :rtype: None
+    """
+    def __init__(self, player1: Player, player2: Player) -> None:
         """
-        Initialize a match with two players.
+        Initializes a match with two players.
 
-        :param joueur1: The first player
-        :type joueur1: Joueur
-        :param joueur2: The second player
-        :type joueur2: Joueur
+        :param player1: The first player
+        :type player1: Player
+        :param player2: The second player
+        :type player2: Player
+        :return: None
+        :rtype: None
         """
-        self.joueur1 = joueur1
-        self.joueur2 = joueur2
-        self.score_joueur1 = 0  # Default score is 0
-        self.score_joueur2 = 0
+        self.player1 = player1
+        self.player2 = player2
+        self.score_player1 = 0.0  # Initial score
+        self.score_player2 = 0.0
 
-    def creer_matchs(self, liste_joueurs: List[Joueur]) -> List['Match']:
+    def record_result(self) -> None:
         """
-        Create matches from a list of players.
+        Records the result of the match.
 
-        :param liste_joueurs: List of players
-        :type liste_joueurs: List[Joueur]
-        :return: List of matches
-        :rtype: List[Match]
+        :return: None
+        :rtype: None
         """
-        if self.nom == "Round 1":
-            random.shuffle(liste_joueurs)  # Shuffle for the first round
-        else:
-            liste_joueurs.sort(key=lambda joueur: joueur.points, reverse=True)
-
-        paires_deja_jouees = set()
-        self.matchs = []
-        i = 0
-        while i < len(liste_joueurs) - 1:
-            joueur1 = liste_joueurs[i]
-            joueur2 = liste_joueurs[i + 1]
-
-            if (joueur1, joueur2) in paires_deja_jouees or (joueur2, joueur1) in paires_deja_jouees:
-                i += 1
-                if i + 1 < len(liste_joueurs):
-                    joueur2 = liste_joueurs[i + 1]
-                else:
-                    break
-
-            match = Match(joueur1, joueur2)
-            self.matchs.append(match)
-            paires_deja_jouees.add((joueur1, joueur2))
-            i += 2
-
-        if len(liste_joueurs) % 2 != 0:
-            joueur_restant = liste_joueurs[-1]
-            print(f"{joueur_restant} n'a pas d'adversaire pour ce tour (bye).")
-
-        return self.matchs
-
-    def enregistrer_resultat(self) -> None:
-        """
-        Record the result of the match and update the scores.
-        """
-        print(f"Match entre {self.joueur1} et {self.joueur2}")
-        resultat = input("Qui a gagné ? (1 pour Joueur 1, 2 pour Joueur 2, N pour nul) : ")
-
-        if resultat == "1":
-            self.score_joueur1 = 1
-            self.score_joueur2 = 0
-            print(f"{self.joueur1} gagne le match.")
-        elif resultat == "2":
-            self.score_joueur1 = 0
-            self.score_joueur2 = 1
-            print(f"{self.joueur2} gagne le match.")
-        elif resultat.upper() == "N":
-            self.score_joueur1 = 0.5
-            self.score_joueur2 = 0.5
-            print("Match nul.")
-        else:
-            print("Entrée invalide. Essayez encore.")
-            return self.enregistrer_resultat()
-
-        self.joueur1.mettre_a_jour_points(self.score_joueur1)
-        self.joueur2.mettre_a_jour_points(self.score_joueur2)
+        pass  # The result is already recorded in MatchController
 
     def __str__(self) -> str:
         """
-        Return a string representation of the match.
+        Returns a string representation of the match.
 
         :return: String representation of the match
         :rtype: str
         """
-        return f"{self.joueur1} (Score: {self.score_joueur1}) vs {self.joueur2} (Score: {self.score_joueur2})"
+        return f"{self.player1} (Score: {self.score_player1}) vs {self.player2} (Score: {self.score_player2})"
 
     def to_dict(self) -> Dict[str, Any]:
         """
-        Convert the Match instance to a dictionary for JSON saving.
+        Converts the Match instance to a dictionary for JSON saving.
 
         :return: Dictionary representation of the match
         :rtype: Dict[str, Any]
         """
         return {
-            "joueur1": self.joueur1.to_dict(),
-            "joueur2": self.joueur2.to_dict(),
-            "score_joueur1": self.score_joueur1,
-            "score_joueur2": self.score_joueur2
+            "player1": self.player1.to_dict(),
+            "player2": self.player2.to_dict(),
+            "score_player1": self.score_player1,
+            "score_player2": self.score_player2
         }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Match':
         """
-        Create a Match instance from a dictionary.
+        Creates a Match instance from a dictionary.
 
         :param data: Dictionary containing match data
         :type data: Dict[str, Any]
         :return: Match instance
         :rtype: Match
         """
-        joueur1 = Joueur.from_dict(data["joueur1"])
-        joueur2 = Joueur.from_dict(data["joueur2"])
-        match = cls(joueur1, joueur2)
-        match.score_joueur1 = data["score_joueur1"]
-        match.score_joueur2 = data["score_joueur2"]
+        player1 = Player.from_dict(data["player1"])
+        player2 = Player.from_dict(data["player2"])
+        match = cls(player1, player2)
+        match.score_player1 = data["score_player1"]
+        match.score_player2 = data["score_player2"]
         return match
