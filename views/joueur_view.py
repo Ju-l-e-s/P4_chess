@@ -1,6 +1,23 @@
 # views/joueur_view.py
 
 class JoueurView:
+    def afficher_joueurs(joueurs: list) -> None:
+        """
+        Display the list of players with their details.
+
+        :param joueurs: List of player objects to display
+        :type joueurs: list
+        :return: None
+        :rtype: None
+        """
+
+    def demander_informations_joueur() -> tuple:
+        """
+        Prompt the user to enter player information.
+
+        :return: A tuple containing the player's last name, first name, birth date, and national ID
+        :rtype: tuple
+        """
     @staticmethod
     def afficher_joueurs(joueurs):
         for joueur in joueurs:

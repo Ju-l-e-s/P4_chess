@@ -3,29 +3,55 @@
 import re
 import json
 import os
+from typing import List, Dict, Any
 
 class Joueur:
     data_file = 'data/joueurs.json'
 
-    def __init__(self, nom, prenom, date_naissance, id_national):
+    def __init__(self, nom: str, prenom: str, date_naissance: str, id_national: str) -> None:
+        """
+        Initialize a Joueur instance.
+
+        :param nom: Last name of the player
+        :type nom: str
+        :param prenom: First name of the player
+        :type prenom: str
+        :param date_naissance: Birth date of the player in the format dd/mm/yyyy
+        :type date_naissance: str
+        :param id_national: National ID of the player, must be two letters followed by five digits (e.g., AB12345)
+        :type id_national: str
+        :raises ValueError: If the national ID or birth date format is invalid
+        """
         self.nom = nom
         self.prenom = prenom
         self.date_naissance = date_naissance
         self.id_national = id_national
-        self.points = 0.0  # Utilisation de float pour les demi-points
+        self.points = 0.0  # Using float for half-points
 
-        # Validation de l'identifiant national
+        # Validate national ID
         if not re.match(r'^[A-Z]{2}\d{5}$', self.id_national):
-            raise ValueError("L'identifiant national doit être deux lettres suivies de cinq chiffres (ex: AB12345)")
+            raise ValueError("The national ID must be two letters followed by five digits (e.g., AB12345)")
 
-        # Validation du format de la date de naissance
+        # Validate birth date format
         if not re.match(r'^\d{2}/\d{2}/\d{4}$', self.date_naissance):
-            raise ValueError("La date de naissance doit être au format jj/mm/aaaa")
+            raise ValueError("The birth date must be in the format dd/mm/yyyy")
     
-    def mettre_a_jour_points(self, points):
+    def mettre_a_jour_points(self, points: float) -> None:
+        """
+        Update the player's points.
+
+        :param points: Points to add to the player's total
+        :type points: float
+        """
         self.points += points
         
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert the player instance to a dictionary.
+
+        :return: Dictionary representation of the player
+        :rtype: dict
+        """
         return {
             'nom': self.nom,
             'prenom': self.prenom,
@@ -35,7 +61,15 @@ class Joueur:
         }
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data: Dict[str, Any]) -> 'Joueur':
+        """
+        Create a Joueur instance from a dictionary.
+
+        :param data: Dictionary containing player data
+        :type data: dict
+        :return: Joueur instance
+        :rtype: Joueur
+        """
         joueur = cls(
             nom=data['nom'],
             prenom=data['prenom'],
@@ -46,8 +80,14 @@ class Joueur:
         return joueur
 
     @classmethod
-    def sauvegarder_joueurs(cls, liste_joueurs):
-        # Vérifier que le répertoire existe, sinon le créer
+    def sauvegarder_joueurs(cls, liste_joueurs: List['Joueur']) -> None:
+        """
+        Save a list of players to a JSON file.
+
+        :param liste_joueurs: List of Joueur instances to save
+        :type liste_joueurs: list
+        """
+        # Ensure the directory exists, create if not
         directory = os.path.dirname(cls.data_file)
         if directory and not os.path.exists(directory):
             os.makedirs(directory)
@@ -55,7 +95,13 @@ class Joueur:
             json.dump([joueur.to_dict() for joueur in liste_joueurs], f, indent=4)
 
     @classmethod
-    def charger_joueurs(cls):
+    def charger_joueurs(cls) -> List['Joueur']:
+        """
+        Load a list of players from a JSON file.
+
+        :return: List of Joueur instances
+        :rtype: list
+        """
         if os.path.exists(cls.data_file):
             with open(cls.data_file, 'r') as f:
                 data = json.load(f)
@@ -63,5 +109,11 @@ class Joueur:
         else:
             return []
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return a string representation of the player.
+
+        :return: String representation of the player
+        :rtype: str
+        """
         return f"{self.nom} {self.prenom} ({self.id_national})"

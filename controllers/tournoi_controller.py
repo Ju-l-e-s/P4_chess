@@ -5,110 +5,127 @@ from views.tournoi_view import TournoiView
 from controllers.joueur_controller import JoueurController
 
 from datetime import datetime
+from typing import List, Optional, Union
 
 
 class TournoiController:
     def __init__(self):
-        self.tournois = Tournoi.charger_tournois()
-        self.joueur_controller = JoueurController()
+        """Initialize the TournoiController with loaded tournaments and a JoueurController instance."""
+        self.tournois: List[Tournoi] = Tournoi.charger_tournois()
+        self.joueur_controller: JoueurController = JoueurController()
 
-    def creer_tournoi(self):
-        # Création du tournoi
+    def creer_tournoi(self) -> None:
+        """Create a new tournament and add players to it."""
+        # Create the tournament
         nom, lieu, nb_tours, description = TournoiView.demander_informations_tournoi()
-        tournoi = Tournoi(nom, lieu, int(nb_tours), description)
+        tournoi: Tournoi = Tournoi(nom, lieu, int(nb_tours), description)
 
-        # Ajout des joueurs au tournoi
-        print("\n--- Ajout des joueurs au tournoi ---")
+        # Add players to the tournament
+        print("\n--- Adding players to the tournament ---")
 
-        joueurs_disponibles = self.joueur_controller.joueurs
+        joueurs_disponibles: List[Joueur] = self.joueur_controller.joueurs
         if not joueurs_disponibles:
-            print("Aucun joueur disponible pour ce tournoi.")
+            print("No players available for this tournament.")
             return
 
-        # Affichage des joueurs avec des numéros pour la sélection
+        # Display players with numbers for selection
         for index, joueur in enumerate(joueurs_disponibles, start=1):
             print(f"{index}. {joueur.nom} {joueur.prenom} (ID: {joueur.id_national})")
 
-        # Boucle pour permettre la sélection de plusieurs joueurs
-        joueurs_ajoutes = set()  # Pour éviter les doublons
+        # Loop to allow selection of multiple players
+        joueurs_ajoutes: set = set()  # To avoid duplicates
         while True:
-            choix = input("Entrez le(s) numéro(s) des joueurs à ajouter (ex: 1,3,5 ou 'fin' pour terminer) : ")
+            choix: str = input("Enter the number(s) of the players to add (e.g., 1,3,5 or 'fin' to finish): ")
             if choix.lower() == 'fin':
                 break
 
             try:
-                # Diviser la chaîne de caractères par les virgules, et convertir chaque partie en un index
-                indices = [int(num.strip()) - 1 for num in choix.split(',')]
+                # Split the string by commas and convert each part to an index
+                indices: List[int] = [int(num.strip()) - 1 for num in choix.split(',')]
                 for index in indices:
                     if 0 <= index < len(joueurs_disponibles):
-                        joueur = joueurs_disponibles[index]
+                        joueur: Joueur = joueurs_disponibles[index]
                         if joueur not in joueurs_ajoutes:
                             tournoi.ajouter_joueur(joueur)
                             joueurs_ajoutes.add(joueur)
-                            print(f"Joueur {joueur.nom} {joueur.prenom} ajouté au tournoi.")
+                            print(f"Player {joueur.nom} {joueur.prenom} added to the tournament.")
                         else:
-                            print(f"Joueur {joueur.nom} {joueur.prenom} déjà ajouté au tournoi.")
+                            print(f"Player {joueur.nom} {joueur.prenom} already added to the tournament.")
                     else:
-                        print(f"Le numéro {index + 1} est invalide. Veuillez entrer un numéro valide.")
+                        print(f"The number {index + 1} is invalid. Please enter a valid number.")
             except ValueError:
-                print("Entrée invalide. Veuillez entrer des numéros séparés par des virgules.")
+                print("Invalid input. Please enter numbers separated by commas.")
 
-        # Finalisation de la création du tournoi
+        # Finalize the creation of the tournament
         self.tournois.append(tournoi)
         Tournoi.sauvegarder_tournois(self.tournois)
-        print("Tournoi créé avec succès.")
+        print("Tournament created successfully.")
 
-    def demarrer_tournoi(self, tournoi):
-        tours_restants = tournoi.nb_tours - tournoi.tour_actuel
-        for _ in range(tours_restants):
-            tour_controller = TourController(tournoi)
-            tour_controller.demarrer_tour()
-            # Incrémentation du tour actuel si nécessaire
-            # tournoi.tour_actuel += 1  # Décommenter si l'incrémentation ne se fait pas ailleurs
+    def demarrer_tournoi(self, tournoi: Tournoi) -> None:
+        """Start the tournament and manage its rounds.
+
+        :param tournoi: The tournament to start
+        :type tournoi: Tournoi
+        """
+        tours_restants: int = tournoi.nb_tours - tournoi.tour_actuel
+        for i in range(tournoi.tour_actuel, tours_restants):
+            tour_controller: TourController = TourController(tournoi)
+            tour_controller.demarrer_tour(i)
+            # Increment the current round if necessary
+            # tournoi.tour_actuel += 1  # Uncomment if the increment is not done elsewhere
             Tournoi.sauvegarder_tournois(self.tournois)
-        # Le tournoi est terminé
+        # The tournament is finished
         tournoi.terminer()
         Tournoi.sauvegarder_tournois(self.tournois)
-        classement = tournoi.get_classement()
+        classement: List[Joueur] = tournoi.get_classement()
         TournoiView.afficher_classement(classement)
 
-
-
-    def lister_tournois(self):
+    def lister_tournois(self) -> None:
+        """List all tournaments."""
         self.tournois = Tournoi.charger_tournois()
         TournoiView.afficher_liste_tournois(self.tournois)
 
-    def selectionner_tournoi(self):
-        # Filtrer les tournois pour n'afficher que ceux qui n'ont pas encore de date de fin
-        tournois_en_cours = [tournoi for tournoi in self.tournois if not tournoi.date_fin]
+    def selectionner_tournoi(self) -> Optional[Tournoi]:
+        """Select a tournament that has not yet ended.
+
+        :return: The selected tournament or None if no tournament is selected
+        :rtype: Optional[Tournoi]
+        """
+        # Filter tournaments to display only those that do not have an end date
+        tournois_en_cours: List[Tournoi] = [tournoi for tournoi in self.tournois if not tournoi.date_fin]
         if not tournois_en_cours:
-            print("Aucun tournoi en cours disponible.")
+            print("No ongoing tournaments available.")
             return None
 
-        print("\n--- Liste des tournois disponibles ---")
+        print("\n--- List of available tournaments ---")
         for index, tournoi in enumerate(tournois_en_cours, start=1):
-            # Convertir en datetime si `date_debut` est une chaîne
-            date_debut = datetime.strptime(tournoi.date_debut, "%d/%m/%Y") if isinstance(tournoi.date_debut,
-                                                                                         str) else tournoi.date_debut
-            date_fin = "En cours"  # Affichage pour les tournois en cours
+            # Convert to datetime if `date_debut` is a string
+            date_debut: Union[datetime, str] = datetime.strptime(tournoi.date_debut, "%d/%m/%Y") if isinstance(tournoi.date_debut, str) else tournoi.date_debut
+            date_fin: str = "Ongoing"  # Display for ongoing tournaments
 
-            # Affichage formaté
-            date_debut_str = date_debut.strftime("%d/%m/%Y") if date_debut else "Non défini"
-            print(f"{index}. {tournoi.nom} à débuté le {date_debut_str} (à {tournoi.lieu}) ")
+            # Formatted display
+            date_debut_str: str = date_debut.strftime("%d/%m/%Y") if date_debut else "Not defined"
+            print(f"{index}. {tournoi.nom} started on {date_debut_str} (at {tournoi.lieu}) ")
 
         while True:
-            choix = input("Entrez le numéro du tournoi à sélectionner (ou 'retour' pour revenir au menu principal) : ")
+            choix: str = input("Enter the number of the tournament to select (or 'retour' to return to the main menu): ")
             if choix.lower() == 'retour':
-                return None  # Permet de revenir au menu principal
+                return None  # Allows returning to the main menu
 
             try:
-                index = int(choix) - 1
+                index: int = int(choix) - 1
                 if 0 <= index < len(tournois_en_cours):
                     return tournois_en_cours[index]
                 else:
-                    print("Choix invalide. Veuillez entrer un numéro valide.")
+                    print("Invalid choice. Please enter a valid number.")
             except ValueError:
-                print("Entrée invalide. Veuillez entrer un numéro.")
-    def afficher_details_tournoi(self, tournoi):
+                print("Invalid input. Please enter a number.")
+
+    def afficher_details_tournoi(self, tournoi: Tournoi) -> None:
+        """Display the details of a tournament.
+
+        :param tournoi: The tournament whose details are to be displayed
+        :type tournoi: Tournoi
+        """
         TournoiView.afficher_informations_tournoi(tournoi)
         TournoiView.afficher_classement(tournoi.get_classement())
