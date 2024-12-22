@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from models.player_model import Player
 from typing import Dict, Any
+
 
 class Match:
     """
@@ -12,6 +15,7 @@ class Match:
     :return: None
     :rtype: None
     """
+
     def __init__(self, player1: Player, player2: Player) -> None:
         """
         Initializes a match with two players.
@@ -23,10 +27,12 @@ class Match:
         :return: None
         :rtype: None
         """
-        self.player1 = player1
-        self.player2 = player2
-        self.score_player1 = 0.0  # Initial score
-        self.score_player2 = 0.0
+
+        def __init__(self, name: str) -> None:
+            self.name = name
+            self.matches = []
+            self.start_datetime = datetime.now()
+            self.end_datetime = None
 
     def record_result(self) -> None:
         """
@@ -54,10 +60,10 @@ class Match:
         :rtype: Dict[str, Any]
         """
         return {
-            "player1": self.player1.to_dict(),
-            "player2": self.player2.to_dict(),
-            "score_player1": self.score_player1,
-            "score_player2": self.score_player2
+            'player1': self.player1.to_dict(),
+            'player2': self.player2.to_dict() if self.player2 else None,
+            'score_player1': self.score_player1,
+            'score_player2': self.score_player2
         }
 
     @classmethod

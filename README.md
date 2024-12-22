@@ -52,7 +52,7 @@ pip install -r requirements.txt
 
 **Usage**
 ```bash
-python main.py
+src/main.py
 ```
 The program displays a main menu allowing you to perform the following actions:
 
@@ -73,27 +73,33 @@ The program displays a main menu allowing you to perform the following actions:
 
 ## Project Structure:
 ```
-├── controllers/
-│ ├── match_controller.py
-│ ├── player_controller.py
-│ ├── report_controller.py
-│ ├── round_controller.py
-│ └── tournament_controller.py
-├── models/
-│ ├── match_model.py
-│ ├── player_model.py
-│ ├── round_model.py
-│ └── tournament_model.py
-├── views/
-│ ├── match_view.py
-│ ├── player_view.py
-│ └── tournament_view.py
-├── data/ # Contains data files
-│ ├── players.json
-│ └── tournaments.json
-├── main.py
-├── requirements.txt
-├── flake8_report/
-│ └── index.html
-└── README.md
+P4/
+├── src/
+│    ├── main.py
+│    ├── controllers/
+│    │   ├── match_controller.py
+│    │   ├── player_controller.py
+│    │   ├── report_controller.py
+│    │   ├── round_controller.py
+│    │   └── tournament_controller.py
+│    ├── models/
+│    │   ├── match_model.py
+│    │   ├── player_model.py
+│    │   ├── round_model.py
+│    │   └── tournament_model.py
+│    ├── views/
+│    │   ├── menu_view.py
+│    │   ├── match_view.py
+│    │   ├── player_view.py
+│    │   └── tournament_view.py
+│    ├── data/
+│    │    ├── players.json
+│    │    └── tournaments.json
+│    └── utils/
+│         ├── clear.py
+├── .gitignore
+├── README.md
+└── requirements.txt
+
+
 ```

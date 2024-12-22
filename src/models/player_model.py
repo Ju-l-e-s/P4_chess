@@ -18,7 +18,7 @@ class Player:
     :return: None
     :rtype: None
     """
-    data_file = 'data/players.json'
+    data_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'players.json')
 
     def __init__(self, last_name: str, first_name: str, birth_date: str, national_id: str) -> None:
         """
@@ -114,16 +114,14 @@ class Player:
 
     @classmethod
     def load_players(cls) -> List['Player']:
-        """
-        Loads a list of players from a JSON file.
-
-        :return: List of Player instances
-        :rtype: list
-        """
         if os.path.exists(cls.data_file):
             with open(cls.data_file, 'r') as f:
-                data = json.load(f)
-                return [cls.from_dict(player_data) for player_data in data]
+                try:
+                    data = json.load(f)
+                    return [cls.from_dict(player_data) for player_data in data]
+                except json.JSONDecodeError as e:
+                    print(f"Erreur de lecture JSON : {e}")
+                    return []
         else:
             return []
 

@@ -3,7 +3,8 @@ from models.round_model import Round
 from models.player_model import Player
 import json
 import os
-from typing import List, Dict, Any, Optional, Set, Tuple
+from typing import List, Dict, Any, Set, Tuple
+
 
 class Tournament:
     """
@@ -28,7 +29,7 @@ class Tournament:
     :return: None
     :rtype: None
     """
-    data_file = 'data/tournaments.json'
+    data_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'tournaments.json')
 
     def __init__(self, name: str, location: str, number_of_rounds: int = 4, description: str = '') -> None:
         """
@@ -67,14 +68,13 @@ class Tournament:
         """
         self.players.append(player)
 
+
     def add_round(self, round_instance: Round) -> None:
         """
         Adds a round to the tournament.
 
         :param round_instance: Round to add
         :type round_instance: Round
-        :return: None
-        :rtype: None
         """
         self.rounds.append(round_instance)
         self.current_round += 1
@@ -86,7 +86,8 @@ class Tournament:
         :return: List of players sorted by points in descending order
         :rtype: List[Player]
         """
-        ranking = sorted(self.players, key=lambda player: player.points, reverse=True)
+        ranking = sorted(
+            self.players, key=lambda player: player.points, reverse=True)
         return ranking
 
     def to_dict(self) -> Dict[str, Any]:
@@ -104,10 +105,28 @@ class Tournament:
             'number_of_rounds': self.number_of_rounds,
             'current_round': self.current_round,
             'players': [player.to_dict() for player in self.players],
-            'rounds': [round_instance.to_dict() for round_instance in self.rounds],
+            'rounds': [round_instance.to_dict() for round_instance in self.rounds],  # Include round number
             'description': self.description,
             'pairs_already_played': list(self.pairs_already_played)
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'Tournament':
+        tournament = cls(
+            name=data['name'],
+            location=data['location'],
+            number_of_rounds=data['number_of_rounds'],
+            description=data['description']
+        )
+        tournament.start_date = data.get('start_date', None)
+        tournament.end_date = data.get('end_date', None)
+        tournament.current_round = data.get('current_round', 0)
+
+        tournament.players = [Player.from_dict(player) for player in data.get('players', [])]
+        tournament.rounds = [Round.from_dict(round_data) for round_data in data.get('rounds', [])]
+        tournament.pairs_already_played = set(tuple(pair) for pair in data.get('pairs_already_played', []))
+
+        return tournament
 
     def end(self) -> None:
         """
@@ -120,26 +139,22 @@ class Tournament:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Tournament':
-        """
-        Creates a Tournament instance from a dictionary.
-
-        :param data: Dictionary containing tournament data
-        :type data: Dict[str, Any]
-        :return: Tournament instance
-        :rtype: Tournament
-        """
         tournament = cls(
             name=data['name'],
             location=data['location'],
-            number_of_rounds=data.get('number_of_rounds', 4),
-            description=data.get('description', '')
+            number_of_rounds=data['number_of_rounds'],
+            description=data['description']
         )
-        tournament.start_date = data.get('start_date')  # Can be None
-        tournament.end_date = data.get('end_date')
+        tournament.start_date = data.get('start_date', None)
+        tournament.end_date = data.get('end_date', None)
         tournament.current_round = data.get('current_round', 0)
-        tournament.players = [Player.from_dict(p) for p in data.get('players', [])]
-        tournament.rounds = [Round.from_dict(r) for r in data.get('rounds', [])]
-        tournament.pairs_already_played = set(tuple(pair) for pair in data.get('pairs_already_played', []))
+        tournament.players = [Player.from_dict(player) for player in data.get('players', [])]
+        tournament.rounds = [Round.from_dict(round_data) for round_data in data.get('rounds', [])]
+
+        # Convertir les paires déjà jouées en set de tuples
+        pairs = data.get('pairs_already_played', [])
+        tournament.pairs_already_played = set(tuple(p) for p in pairs)
+
         return tournament
 
     @classmethod
@@ -153,19 +168,33 @@ class Tournament:
         :rtype: None
         """
         with open(cls.data_file, 'w') as f:
-            json.dump([tournament.to_dict() for tournament in tournaments_list], f, indent=4)
+            json.dump([tournament.to_dict()
+                      for tournament in tournaments_list], f, indent=4)
 
     @classmethod
     def load_tournaments(cls) -> List['Tournament']:
-        """
-        Loads a list of tournaments from a JSON file.
+        if not os.path.exists(cls.data_file):
+            # Créer le répertoire si nécessaire
+            directory = os.path.dirname(cls.data_file)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
 
-        :return: List of tournaments
-        :rtype: List[Tournament]
-        """
-        if os.path.exists(cls.data_file):
-            with open(cls.data_file, 'r') as f:
+            # Créer le fichier tournaments.json avec un tableau vide
+            with open(cls.data_file, 'w') as f:
+                f.write('[]')
+
+        # A ce stade, le fichier existe
+        # Vérifier s'il est vide
+        if os.path.getsize(cls.data_file) == 0:
+            # Si vide, écrire '[]' dedans
+            with open(cls.data_file, 'w') as f:
+                f.write('[]')
+
+        with open(cls.data_file, 'r') as f:
+            try:
                 data = json.load(f)
+
                 return [cls.from_dict(tournament_data) for tournament_data in data]
-        else:
-            return []
+            except json.JSONDecodeError as e:
+                print(f"Erreur de lecture JSON : {e}")
+                return []
